@@ -1,0 +1,16 @@
+# add vmware plugin in folder before vagrant up
+vagrant plugin install vagrant-vmware-desktop
+
+# saul ip 192.168.142.158
+# auditd ip 192.168.142.148
+# combo ip 192.168.142.159
+
+cd /etc/audit/rules.d
+systemctl restart auditd.service
+ll /sbin/ip
+
+# index size
+sudo du -h --max-depth=1 /opt/splunk/var/lib//linux_auditd
+
+
+

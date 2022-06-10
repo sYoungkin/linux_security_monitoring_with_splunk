@@ -1,0 +1,47 @@
+### T1016 - System Network Configuration Discovery
+
+# Creat and run the following script:
+if [ -x "$(command -v arp)" ]; then arp -a; else echo "arp is missing from the machine. skipping..."; fi;
+if [ -x "$(command -v ifconfig)" ]; then ifconfig; else echo "ifconfig is missing from the machine. skipping..."; fi;
+if [ -x "$(command -v ip)" ]; then ip addr; else echo "ip is missing from the machine. skipping..."; fi;
+if [ -x "$(command -v netstat)" ]; then netstat -ant | awk '{print $NF}' | grep -v '[a-z]' | sort | uniq -c; else echo "netstat is missing from the machine. skipping..."; fi;
+
+# to get pre-req commands
+(which yum && yum -y install net-tools)||(which apt-get && DEBIAN_FRONTEND=noninteractive apt-get install -y net-tools)
+
+## System network configuration discovery audit rules
+-w /usr/sbin/arp -p x -k T1016_network_discovery
+# -w /sbin/ip has symlink: /sbin/ip -> /bin/ip*
+-w /bin/ip -p x -k T1016_network_discovery
+-w /bin/netstat -p x -k T1016_network_discovery
+-w /sbin/ifconfig -p x -k T1016_network_discovery
+
+# sh network_discovery.sh 
+
+### T1003.008 - /etc/passwd and /etc/shadow
+
+# Auditd files to monitor
+
+-w /etc/passwd -p r -k passwd_read
+-w /etc/passwd -p wa -k passwd_write
+-w /etc/shadow -p r -k shadow_read
+-w /etc/shadow -p wa -k shadow_write
+
+# test 1
+sudo cat /etc/shadow > sys_pwds
+
+# test 2
+cat /etc/passwd > sys_accs
+
+# test 3: bash script
+function testcat(){ echo "$(< $1)"; }
+testcat /etc/passwd > credential_dump
+testcat /etc/shadow >> credential_dump
+# sudo bash credential_dumping.sh
+
+
+
+### 
+-a always,exit -F arch=b64 -C auid!=uid -S execve -k Setuid_Setgid_Change
+-a always,exit -F arch=b64 -S setuid -S setgid -S setreuid -S setregid -k Setuid_Setgid_Change
+
