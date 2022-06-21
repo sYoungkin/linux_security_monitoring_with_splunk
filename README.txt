@@ -1,10 +1,11 @@
 # Add vmware plugin in folder before vagrant up
 vagrant plugin install vagrant-vmware-desktop
 
-# unfortunately creating private networks with vmare is not as trival as with virtual box
-# (in inprince the whole thing could be rewritten with virtualbox)
-# That is, there is not a static IP address. After vagrant up, just "ip a" to get the address 
-# and save it somewhere. PASSWORD is "vagrant". Example to connect per ssh:
+# Unfortunately creating private networks with vmare is not as trival as with virtual box
+# (in principle the whole thing could be rewritten using virtualbox, but it is not working for me due to annoying bug)
+# That is, there is not a static IP address. After "vagrant up", ssh into the instances (see next lines), 
+# and just "ip a" to get the address. It will have this address until you destroy the vms
+# SSH PASSWORD is "vagrant". Example to connect per ssh:
 #   auditd ip 192.168.142.148:
 #       ssh vagrant@192.168.142.148
 #   saul ip 192.168.142.158:
@@ -22,6 +23,6 @@ vagrant plugin install vagrant-vmware-desktop
 # sudo tar xvzf /home/vagrant/linux-auditd-technology-add-on_<your version>.tgz -C /opt/splunk/etc/apps
 
 # Audit rules are found in /etc/audit/rules.d
-# NOTE: do not write the rules in /etc/audit
+# NOTE: do not write the rules in /etc/audit. 
 # Restart after changes: systemctl restart auditd.service
 
