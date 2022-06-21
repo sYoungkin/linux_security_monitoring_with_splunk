@@ -29,5 +29,4 @@ NOTE: do not write the rules in /etc/audit.
 Restart after changes: systemctl restart auditd.service
 
 # You can build vms one at a time by "vagrant up <auditd|saul|combo>". This is better when first trying to 
-build the environment after changing provisions, etc, because you will surely mess something up
-
+build the environment after changing provisions
