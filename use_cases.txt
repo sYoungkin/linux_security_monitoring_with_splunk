@@ -9,14 +9,22 @@ if [ -x "$(command -v netstat)" ]; then netstat -ant | awk '{print $NF}' | grep 
 # to get pre-req commands
 (which yum && yum -y install net-tools)||(which apt-get && DEBIAN_FRONTEND=noninteractive apt-get install -y net-tools)
 
+
+
 ## System network configuration discovery audit rules
+
 -w /usr/sbin/arp -p x -k T1016_network_discovery
+
 # -w /sbin/ip has symlink: /sbin/ip -> /bin/ip*
 -w /bin/ip -p x -k T1016_network_discovery
+
 -w /bin/netstat -p x -k T1016_network_discovery
+
 -w /sbin/ifconfig -p x -k T1016_network_discovery
 
 # sh network_discovery.sh 
+
+
 
 ### T1003.008 - /etc/passwd and /etc/shadow
 
@@ -38,10 +46,3 @@ function testcat(){ echo "$(< $1)"; }
 testcat /etc/passwd > credential_dump
 testcat /etc/shadow >> credential_dump
 # sudo bash credential_dumping.sh
-
-
-
-### 
--a always,exit -F arch=b64 -C auid!=uid -S execve -k Setuid_Setgid_Change
--a always,exit -F arch=b64 -S setuid -S setgid -S setreuid -S setregid -k Setuid_Setgid_Change
-
