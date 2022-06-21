@@ -1,4 +1,4 @@
-# See the pdf for a walkthrough of the use case demonstration and for useful links to the Splunk apps
+# See the wiki for a walkthrough of the use case demonstration and for useful links to the Splunk apps
 
 # Add vmware plugin in folder before vagrant up
 vagrant plugin install vagrant-vmware-desktop
