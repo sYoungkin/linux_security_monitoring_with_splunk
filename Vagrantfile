@@ -183,4 +183,48 @@ Vagrant.configure("2") do |config|
         sudo /opt/splunk/bin/splunk start
     SHELL
         end
+
+    #################### Splunk instance with Splunk Add-on for Linux######################
+    config.vm.define "sal" do |subconfig|
+        subconfig.vm.box = BOX_IMAGE
+        subconfig.vm.hostname = "sal"
+        subconfig.vm.synced_folder ".", "/vagrant", disabled: true
+        subconfig.vm.provision "file", source: "~/vagrant_projects/splunk_apps/splunk-common-information-model-cim_501.tgz", destination: "/home/vagrant/splunk-common-information-model-cim_501.tgz"
+        subconfig.vm.provision "file", source: "~/vagrant_projects/splunk_apps/splunk-add-on-for-linux_200.tgz", destination: "/home/vagrant/splunk-add-on-for-linux_200.tgz"
+        subconfig.vm.provision "shell", inline: <<-SHELL
+
+        #### BASE SPLUNK INSTALLATION ####
+        sudo apt update -y && sudo apt install wget -y
+        sudo wget -P /opt splunk-8.2.4-87e2dda940d1-Linux-x86_64.tgz "https://download.splunk.com/products/splunk/releases/8.2.4/linux/splunk-8.2.4-87e2dda940d1-Linux-x86_64.tgz" 
+        sudo tar xvzf /opt/splunk-8.2.4-87e2dda940d1-Linux-x86_64.tgz -C /opt
+        sudo adduser splunk
+        sudo chown -R splunk. /opt/splunk
+        sudo /opt/splunk/bin/splunk enable boot-start -user splunk -systemd-managed 1 --accept-license --no-prompt
+        echo -e "[user_info] \nUSERNAME = admin \nPASSWORD = adminuser" >> /opt/splunk/etc/system/local/user-seed.conf
+        # Create alias for splunk for vagrant and root user
+        echo -e "alias splunk='sudo /opt/splunk/bin/splunk'" >> /home/vagrant/.bashrc
+        source /home/vagrant/.bashrc
+        echo -e "alias splunk='/opt/splunk/bin/splunk'" >> /root/.bashrc
+        source /root/.bashrc
+        # Set TZ
+        sudo timedatectl set-timezone Europe/Berlin
+        # Enable TLS/SSL for Splunk Web
+        echo -e "[settings] \nenableSplunkWebSSL = true" >> /opt/splunk/etc/system/local/web.conf
+        sudo chown -R splunk. /opt/splunk/etc/system/local/web.conf
+
+        #### AUDITD INSTALLATION ####
+        sudo apt-get -y install auditd acl
+        sudo service auditd start
+        # Set read permissions on /var/log
+        sudo setfacl -R -m u:splunk:r-x /var/log
+        
+        #### SAL INSTALLATION ####
+        sudo tar xvzf /home/vagrant/splunk-add-on-for-linux_200.tgz -C /opt/splunk/etc/apps
+        sudo tar xvzf /home/vagrant/splunk-common-information-model-cim_501.tgz.tgz -C /opt/splunk/etc/apps
+        sudo chown -R splunk. /opt/splunk/etc/apps
+           
+        # Start Splunk
+        sudo /opt/splunk/bin/splunk start
+    SHELL
+        end
 end

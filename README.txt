@@ -15,6 +15,8 @@ and just "ip a" to get the address. It will have this address until you destroy 
        ssh vagrant@192.168.142.158
 #   combo ip 192.168.142.159:
        ssh vagrant@192.168.142.159
+#   sal ip 192.168.142.167:
+       ssh vagrant@192.168.142.167
 # Note: you can also connect with "vagrant ssh <auditd|saul|combo>"
 
 # Make sure the apps/TAs are download and put somewhere, then just update the provision lines. E.g.:
@@ -28,5 +30,5 @@ sudo tar xvzf /home/vagrant/linux-auditd-technology-add-on_<your version>.tgz -C
 NOTE: do not write the rules in /etc/audit. 
 Restart after changes: systemctl restart auditd.service
 
-# You can build vms one at a time by "vagrant up <auditd|saul|combo>". This is better when first trying to 
+# You can build vms one at a time by "vagrant up <auditd|saul|combo|sal>". This is better when first trying to 
 build the environment after changing provisions
